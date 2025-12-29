@@ -52,18 +52,37 @@ const App: React.FC = () => {
       parts: [{ text: m.content }]
     }));
 
-    const aiResponseText = await generateAssistantResponse(input, history, isThinkingMode);
+    try {
+      const aiResponseText = await generateAssistantResponse(input, history, isThinkingMode);
 
-    const assistantMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      role: 'assistant',
-      content: aiResponseText,
-      timestamp: new Date(),
-      isThinking: isThinkingMode,
-    };
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: aiResponseText,
+        timestamp: new Date(),
+        isThinking: isThinkingMode,
+      };
 
-    setMessages(prev => [...prev, assistantMessage]);
-    setIsLoading(false);
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error: any) {
+      let errorMessage = "Oops, something went wrong! Let's try again, Navie! ❤️";
+      
+      if (error.message === "KEY_REQUIRED") {
+        errorMessage = "I need a valid API key to work. Please click the settings icon in the top right to select one! ❤️";
+        if (window.aistudio?.openSelectKey) {
+          await window.aistudio.openSelectKey();
+        }
+      }
+
+      setMessages(prev => [...prev, {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: errorMessage,
+        timestamp: new Date(),
+      }]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (showIntro) {
