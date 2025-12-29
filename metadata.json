@@ -1,0 +1,8 @@
+{
+  "name": "Navie's Board Buddy",
+  "description": "A personalized AI assistant for Navishi (Navie) to help her ace her 12th grade board exams with love and support.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
